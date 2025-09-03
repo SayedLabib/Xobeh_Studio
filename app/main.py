@@ -1,0 +1,75 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import logging
+import os
+import sys
+
+# Add the current directory to Python path for imports
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Import feature routes directly
+from features.features_6.stable_diffusion_route import router as stable_diffusion_router
+from features.feature_7.gemini_route import router as gemini_router
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+# Create FastAPI app
+app = FastAPI(
+    title="XobehStudio AI Services",
+    description="AI service platform with Stable Diffusion image generation",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Mount static files directory for serving generated images
+images_dir = os.path.join(os.path.dirname(__file__), "..", "generated_images")
+os.makedirs(images_dir, exist_ok=True)
+app.mount("/images", StaticFiles(directory=images_dir), name="images")
+
+# Include routers
+app.include_router(stable_diffusion_router, prefix="/api/v1")
+app.include_router(gemini_router, prefix="/api/v1")
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "message": "XobehStudio AI Services",
+        "version": "1.0.0",
+        "docs": "/docs"
+    }
+
+@app.get("/health")
+async def health_check():
+    """General health check endpoint"""
+    return {
+        "status": "healthy",
+        "message": "XobehStudio AI Services is running",
+        "version": "1.0.0"
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info"
+    )
