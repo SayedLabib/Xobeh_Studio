@@ -12,3 +12,5 @@ requests
 python-multipart
 python-dotenv
 google-genai
+protobuf 
+sentencepiece

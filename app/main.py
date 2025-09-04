@@ -9,7 +9,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import feature routes directly
-from features.features_6.stable_diffusion_route import router as stable_diffusion_router
+from features.feature_6.stable_diffusion_route import router as stable_diffusion_router
 from features.feature_7.gemini_route import router as gemini_router
 
 # Configure logging

@@ -1,78 +1,137 @@
 # 🎨 XobehStudio - AI Image Generation Service
 
-A powerful FastAPI-based service for generating high-quality images using Stable Diffusion v1.5 from Hugging Face.
+A powerful FastAPI-based service for generating high-quality images using Stable Diffusion 3.5 Large with GPU acceleration and advanced optimization features.
 
 ## 🌟 Features
 
-- **Stable Diffusion v1.5**: High-quality image generation using the popular runwayml/stable-diffusion-v1-5 model
-- **RESTful API**: Clean, well-documented API endpoints
-- **Automatic Model Download**: Downloads the model from Hugging Face Hub on first use
-- **GPU/CPU Support**: Automatically detects and uses the best available device (CUDA, MPS, or CPU)
-- **Memory Optimization**: Includes memory management and cleanup utilities
-- **Interactive Documentation**: Swagger UI and ReDoc documentation
-- **Base64 Output**: Returns generated images as base64 encoded strings
+- **🚀 GPU Acceleration**: Full CUDA support with 4-bit quantization for RTX 4060/4070
+- **🎯 Latest AI Model**: Stable Diffusion 3.5 Large (2024) with superior image quality
+- **💾 Memory Optimization**: 4-bit NF4 quantization + CPU offload for 8GB VRAM cards
+- **📁 Local Model Storage**: Download once, run fast locally without re-downloading
+- **🧠 Smart Loading**: Lazy initialization with local-first model loading
+- **🎛️ Environment Configuration**: Comprehensive configuration via environment variables
+- **📊 Real-time Monitoring**: Memory usage tracking and health checks
+- **🔧 RESTful API**: Clean, well-documented API endpoints with interactive documentation
+- **🐳 Docker Ready**: Containerized deployment with docker-compose support
+- **📸 High Quality Output**: 1024x1024 images with enhanced prompt understanding
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Python 3.8 or higher
+- NVIDIA GPU with 8GB+ VRAM (RTX 4060 or better recommended)
+- CUDA 12.1 or higher
+- HuggingFace account and token
 - pip package manager
-- (Optional) NVIDIA GPU with CUDA support for faster generation
+- **Recommended**: NVIDIA GPU with 4GB+ VRAM and CUDA 11.7+ for optimal performance
+- **Alternative**: Apple Silicon (MPS) or CPU support available
 
 ### Installation
 
-1. **Clone or download the project**
+1. **Clone the repository**
    ```bash
+   git clone <repository-url>
    cd XobehStudio
    ```
 
-2. **Install dependencies**
-   
-   **Windows:**
-   ```cmd
-   setup.bat
-   ```
-   
-   **Linux/macOS:**
+2. **Set up environment variables**
    ```bash
-   chmod +x setup.sh
-   ./setup.sh
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env with your API keys and HuggingFace token
+   # Get your token from: https://huggingface.co/settings/tokens
+   # nano .env  # or use your preferred editor
+   ```
+
+3. **Install dependencies**
+   
+   **For CUDA (Recommended for NVIDIA GPUs):**
+   ```bash
+   # Install PyTorch with CUDA 12.1 support first
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+   
+   # Then install other requirements
+   pip install -r requirements.txt
    ```
    
-   **Manual installation:**
+   **For CPU/MPS:**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Start the service**
+4. **Download the AI model (IMPORTANT - First Time Only)**
    ```bash
-   cd app
-   python main.py
+   # This downloads ~20-30GB model to local storage
+   # Only needs to be done once!
+   python download_model.py
+   ```
+   
+   **Note**: The model download is mandatory for first-time setup. This ensures:
+   - ⚡ Fast server startup (loads from local storage)
+   - 🚫 No timeouts during API calls
+   - 📶 Works offline after download
+   - 💾 Efficient disk space usage with resume support
+
+5. **Start the service**
+   ```bash
+   # Method 1: Direct run
+   python app/main.py
+   
+   # Method 2: Uvicorn (recommended)
+   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
 
-4. **Access the service**
+6. **Access the service**
    - Main interface: http://localhost:8000
    - API Documentation: http://localhost:8000/docs
    - Alternative docs: http://localhost:8000/redoc
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+The service is fully configurable via environment variables. Key settings include:
+
+#### API Keys (Required)
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+HUGGINGFACE_TOKEN=your_huggingface_token_here
+```
+
+#### GPU/Device Configuration
+```env
+STABLE_DIFFUSION_DEVICE=cuda        # cuda, mps, or cpu
+STABLE_DIFFUSION_TORCH_DTYPE=float16  # float16, float32, bfloat16
+```
+
+#### Model Selection
+```env
+STABLE_DIFFUSION_MODEL_ID=runwayml/stable-diffusion-v1-5
+```
+
+#### Performance Optimization
+```env
+ENABLE_MEMORY_EFFICIENT_ATTENTION=true
+ENABLE_ATTENTION_SLICING=true
+VAE_SLICING=true
+ENABLE_CPU_OFFLOAD=false  # Set to true for low VRAM GPUs
+```
+
+See `.env.example` for complete configuration options and hardware-specific recommendations.
 
 ## 📋 API Endpoints
 
 ### Generate Image
 **POST** `/api/v1/stable-diffusion/generate`
 
-Generate an image from a text prompt.
+Generate an image from a text prompt with GPU acceleration.
 
-**Request Body:**
+**Request:**
 ```json
 {
-  "prompt": "A beautiful landscape with mountains and a lake at sunset",
-  "negative_prompt": "blurry, low quality, distorted, deformed",
-  "width": 512,
-  "height": 512,
-  "num_inference_steps": 50,
-  "guidance_scale": 7.5,
-  "seed": null
+  "prompt": "A beautiful landscape with mountains and a lake at sunset, highly detailed, masterpiece"
 }
 ```
 
@@ -80,152 +139,155 @@ Generate an image from a text prompt.
 ```json
 {
   "success": true,
-  "message": "Image generated successfully",
-  "image_base64": "iVBORw0KGgoAAAANSUhEUgAA...",
-  "generation_time": 12.34,
-  "model_info": {
-    "model_id": "runwayml/stable-diffusion-v1-5",
-    "device": "cuda",
-    "pipeline_type": "StableDiffusionPipeline"
-  }
+  "message": "Image generated successfully with Stable Diffusion",
+  "image_url": "/images/sd_abc123def456.png"
 }
 ```
 
 ### Health Check
 **GET** `/api/v1/stable-diffusion/health`
 
-Check if the service is ready and the model is loaded.
+Check service status and GPU information.
 
 ### Model Information
-**GET** `/api/v1/stable-diffusion/model-info`
+**GET** `/api/v1/stable-diffusion/info`
 
-Get detailed information about the loaded model.
+Get detailed model and configuration information.
+
+### Memory Status
+**GET** `/api/v1/stable-diffusion/memory`
+
+Get current GPU/CPU memory usage.
 
 ### Cleanup Resources
 **POST** `/api/v1/stable-diffusion/cleanup`
 
-Clean up GPU memory and model resources.
+Free GPU memory and clean up resources.
 
 ## 🎯 Usage Examples
 
-### Python Example
+### Python Example with Error Handling
 ```python
 import requests
-import base64
 from PIL import Image
 import io
 
+def generate_image(prompt: str, save_path: str = "generated.png"):
+    try:
+        response = requests.post(
+            "http://localhost:8000/api/v1/stable-diffusion/generate",
+            json={"prompt": prompt},
+            timeout=300  # 5 minutes timeout
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            
+            # Download the image
+            image_response = requests.get(f"http://localhost:8000{result['image_url']}")
+            
+            # Save the image
+            with open(save_path, 'wb') as f:
+                f.write(image_response.content)
+                
+            print(f"Image saved to {save_path}")
+            return save_path
+        else:
+            print(f"Error: {response.status_code} - {response.text}")
+            
+    except requests.exceptions.Timeout:
+        print("Request timed out. Image generation can take several minutes.")
+    except Exception as e:
+        print(f"Error: {e}")
+
 # Generate an image
-response = requests.post(
-    "http://localhost:8000/api/v1/stable-diffusion/generate",
-    json={
-        "prompt": "A serene forest with sunlight filtering through the trees",
-        "width": 768,
-        "height": 768,
-        "num_inference_steps": 30
-    }
-)
+generate_image("A futuristic cyberpunk city at night, neon lights, highly detailed")
+```
 
-if response.status_code == 200:
-    result = response.json()
+### Check System Status
+```python
+import requests
+
+def check_system_status():
+    # Health check
+    health = requests.get("http://localhost:8000/api/v1/stable-diffusion/health")
+    print("Health:", health.json())
     
-    # Decode base64 image
-    image_data = base64.b64decode(result["image_base64"])
-    image = Image.open(io.BytesIO(image_data))
+    # Memory status (if GPU is available)
+    memory = requests.get("http://localhost:8000/api/v1/stable-diffusion/memory")
+    print("Memory:", memory.json())
     
-    # Save the image
-    image.save("generated_image.png")
-    print(f"Image generated in {result['generation_time']:.2f} seconds")
+    # Model info
+    info = requests.get("http://localhost:8000/api/v1/stable-diffusion/info")
+    print("Model Info:", info.json())
+
+check_system_status()
 ```
 
-### cURL Example
+## 🐳 Docker Deployment
+
+### Quick Start with Docker Compose
 ```bash
-curl -X POST "http://localhost:8000/api/v1/stable-diffusion/generate" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "prompt": "A futuristic city skyline at night with neon lights",
-       "width": 512,
-       "height": 512
-     }'
+# For GPU support (recommended)
+docker-compose -f docker-compose.gpu.yml up -d
+
+# For CPU-only deployment
+docker-compose up -d
 ```
 
-### JavaScript Example
-```javascript
-const generateImage = async () => {
-  const response = await fetch('http://localhost:8000/api/v1/stable-diffusion/generate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      prompt: 'A magical wizard casting spells in an enchanted forest',
-      width: 512,
-      height: 512,
-      num_inference_steps: 40
-    })
-  });
-  
-  const result = await response.json();
-  
-  if (result.success) {
-    // Display the base64 image
-    const img = document.createElement('img');
-    img.src = `data:image/png;base64,${result.image_base64}`;
-    document.body.appendChild(img);
-  }
-};
-```
-
-## ⚙️ Configuration Parameters
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `prompt` | string | **required** | Text description of the image to generate |
-| `negative_prompt` | string | "blurry, low quality..." | What to avoid in the image |
-| `width` | integer | 512 | Image width (256-1024) |
-| `height` | integer | 512 | Image height (256-1024) |
-| `num_inference_steps` | integer | 50 | Number of denoising steps (10-100) |
-| `guidance_scale` | float | 7.5 | How closely to follow the prompt (1.0-20.0) |
-| `seed` | integer | null | Random seed for reproducible results |
-
-## 🔧 Technical Details
-
-### Model Information
-- **Model**: runwayml/stable-diffusion-v1-5
-- **Type**: Text-to-Image Diffusion Model
-- **Scheduler**: DPM Solver Multistep (for faster inference)
-- **Safety**: Safety checker disabled for flexibility
-
-### Performance Optimizations
-- Automatic device detection (CUDA > MPS > CPU)
-- Memory-efficient attention for CUDA devices
-- Attention slicing to reduce memory usage
-- Automatic memory cleanup after generation
-
-### File Structure
-```
-app/
-├── main.py                           # FastAPI application
-├── features/
-│   └── features-6/
-│       ├── stable_diffusion_route.py # API routes
-│       ├── stable_diffusion_schema.py # Request/response schemas
-│       └── stable_diffusion_service.py # Core image generation logic
-```
-
-## 🐳 Docker Support
-
-The project includes Docker configuration for easy deployment:
-
+### Manual Docker Build
 ```bash
-# Build the Docker image
+# Build the image
 docker build -t xobehstudio .
 
-# Run the container
-docker run -p 8000:8000 xobehstudio
+# Run with GPU support
+docker run --gpus all -p 8000:8000 -v $(pwd)/.env:/app/.env xobehstudio
 
-# Or use docker-compose
-docker-compose up
+# Run CPU-only
+docker run -p 8000:8000 -v $(pwd)/.env:/app/.env xobehstudio
+```
+
+## 🔧 Hardware Requirements & Performance
+
+### Recommended Specifications
+
+#### High Performance Setup (Recommended)
+- **GPU**: NVIDIA RTX 3060 (12GB) or better
+- **RAM**: 16GB+
+- **Storage**: 10GB+ free space for models
+- **Expected Speed**: 2-5 seconds per image
+
+#### Budget Setup
+- **GPU**: NVIDIA GTX 1660 (6GB) or RTX 3050 (8GB)
+- **RAM**: 12GB+
+- **Storage**: 10GB+ free space
+- **Expected Speed**: 5-15 seconds per image
+
+#### CPU-Only Setup
+- **CPU**: Modern multi-core processor (8+ cores recommended)
+- **RAM**: 16GB+
+- **Storage**: 10GB+ free space
+- **Expected Speed**: 30-120 seconds per image
+
+### Memory Optimization Tips
+
+For **Low VRAM GPUs (4-6GB)**:
+```env
+ENABLE_MEMORY_EFFICIENT_ATTENTION=true
+ENABLE_ATTENTION_SLICING=true
+ENABLE_CPU_OFFLOAD=true
+VAE_SLICING=true
+IMAGE_WIDTH=512
+IMAGE_HEIGHT=512
+```
+
+For **High VRAM GPUs (8GB+)**:
+```env
+ENABLE_MEMORY_EFFICIENT_ATTENTION=false
+ENABLE_ATTENTION_SLICING=false
+ENABLE_CPU_OFFLOAD=false
+IMAGE_WIDTH=768
+IMAGE_HEIGHT=768
 ```
 
 ## 🛠️ Troubleshooting
@@ -233,32 +295,76 @@ docker-compose up
 ### Common Issues
 
 1. **CUDA Out of Memory**
-   - Reduce image dimensions
-   - Lower num_inference_steps
-   - Use the cleanup endpoint between generations
+   ```bash
+   # Solutions:
+   # 1. Enable CPU offload in .env
+   ENABLE_CPU_OFFLOAD=true
+   
+   # 2. Use smaller image dimensions
+   IMAGE_WIDTH=512
+   IMAGE_HEIGHT=512
+   
+   # 3. Call cleanup endpoint between generations
+   curl -X POST http://localhost:8000/api/v1/stable-diffusion/cleanup
+   ```
 
-2. **Slow Generation**
-   - Ensure CUDA is available and working
-   - Reduce num_inference_steps for faster (but lower quality) results
+2. **Slow Generation Times**
+   ```bash
+   # Check if CUDA is being used
+   curl http://localhost:8000/api/v1/stable-diffusion/health
+   
+   # Reduce steps for faster generation
+   NUM_INFERENCE_STEPS=20
+   ```
 
 3. **Model Download Issues**
    - Ensure stable internet connection
-   - The model (~4GB) will download automatically on first use
+   - Set HUGGINGFACE_TOKEN in .env file
+   - Check available disk space (models are ~4GB each)
 
-### Logs
-The service provides detailed logging. Check the console output for any error messages or status updates.
+4. **Import Errors**
+   ```bash
+   # Reinstall PyTorch with correct CUDA version
+   pip uninstall torch torchvision torchaudio
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+   ```
 
-## 📄 License
-
-This project is licensed under the MIT License.
+### Debug Mode
+Enable debug logging for detailed troubleshooting:
+```env
+DEBUG=true
+LOG_LEVEL=DEBUG
+```
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📞 Support
+### Development Setup
+```bash
+# Install development dependencies
+pip install -r requirements.txt
+pip install pytest black flake8 isort
 
-For support, please open an issue in the project repository or contact the development team.
+# Run tests
+pytest
+
+# Format code
+black .
+isort .
+```
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🆘 Support
+
+For support and questions:
+- 📖 Check the troubleshooting section above
+- 🐛 Open an issue for bugs
+- 💡 Open a discussion for feature requests
+- 📧 Contact the development team
 
 ---
 

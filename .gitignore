@@ -1,4 +1,4 @@
-# Vilisasu Bible AI - Git Ignore File
+# XobehStudio AI Image Generation - Git Ignore File
 
 # ==========================================
 # SENSITIVE FILES - NEVER COMMIT THESE
@@ -9,9 +9,66 @@
 .env.test
 .env.production
 *.env
+!.env.example
 config.ini
 secrets.json
 api_keys.txt
+
+# API Keys and tokens
+GEMINI_API_KEY*
+OPENAI_API_KEY*
+HUGGINGFACE_TOKEN*
+HF_TOKEN*
+API_KEYS*
+
+# ==========================================
+# AI MODELS & WEIGHTS - LARGE FILES
+# ==========================================
+# Downloaded AI models (can be 20-30GB+)
+models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.pkl
+*.pickle
+*.model
+*.weights
+
+# HuggingFace cache
+.cache/
+.huggingface/
+transformers_cache/
+diffusers_cache/
+hub/
+
+# ==========================================
+# GENERATED CONTENT
+# ==========================================
+# AI Generated images
+generated_images/
+outputs/
+results/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.bmp
+*.tiff
+*.svg
+!assets/**
+!static/**
+!docs/**
+!examples/**
+
+# Generated videos (if added later)
+*.mp4
+*.avi
+*.mov
+*.webm
 
 # ==========================================
 # PYTHON
@@ -199,17 +256,15 @@ docker-compose.*.yml
 # ==========================================
 # APPLICATION SPECIFIC
 # ==========================================
-# Generated images - AI output files
-generated_images/
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.webp
-*.bmp
-*.tiff
-!assets/
-!static/assets/
+# Development & testing files
+test_*.py
+*_test.py
+testing/
+debug/
+scripts/temp/
+utils/temp/
+scratch/
+playground/
 
 # Logs
 logs/
@@ -217,44 +272,25 @@ logs/
 app.log
 error.log
 access.log
-
-# API Keys and secrets
-GEMINI_API_KEY
-OPENAI_API_KEY
-HUGGINGFACE_TOKEN
-API_KEYS*
-
-# Model files and weights
-models/
-*.safetensors
-*.bin
-*.pt
-*.pth
-*.ckpt
-*.h5
-*.pkl
-*.pickle
+uvicorn.log
+fastapi.log
 
 # Database
 *.db
 *.sqlite
 *.sqlite3
-
-# Cache directories
-.cache/
-cache/
-.huggingface/
-transformers_cache/
+database/
 
 # Temporary files
 tmp/
 temp/
 *.tmp
 *.temp
+.temp/
 
 # Upload directories
 uploads/
-media/
+media/temp/
 
 # SSL certificates
 *.pem
@@ -286,20 +322,20 @@ docs/_build/
 site/
 
 # ==========================================
-# MONITORING & ANALYTICS
+# PERFORMANCE & MONITORING
 # ==========================================
-# Prometheus data
+# Performance profiling
+*.prof
+*.profile
+performance/
+benchmarks/temp/
+.profiling/
+
+# Monitoring data
 prometheus_data/
 grafana_data/
-
-# ==========================================
-# DEPENDENCIES & PACKAGE MANAGERS
-# ==========================================
-# npm (if used for frontend)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+metrics/
+monitoring/temp/
 
 # ==========================================
 # CLOUD & DEPLOYMENT SPECIFIC
@@ -322,3 +358,127 @@ service-account-key.json
 
 # Kubernetes
 *.kubeconfig
+
+# Deployment configs with secrets
+deploy.env
+production.env
+staging.env
+
+# ==========================================
+# IDE & EDITOR SPECIFIC
+# ==========================================
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+
+# VS Code
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+!.vscode/settings.json.example
+
+# ==========================================
+# MACHINE LEARNING SPECIFIC
+# ==========================================
+# MLflow
+mlruns/
+mlflow.db
+
+# Weights & Biases
+wandb/
+
+# Tensorboard logs
+runs/
+logs/tensorboard/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Experiment results
+experiments/
+results/temp/
+outputs/temp/
+
+# ==========================================
+# OPTIMIZATION & COMPILATION
+# ==========================================
+# PyTorch JIT compiled models
+*.pt.zip
+traced_models/
+torchscript/
+
+# ONNX models
+*.onnx
+onnx_models/
+
+# TensorRT optimized models
+*.trt
+*.engine
+
+# ==========================================
+# DOCUMENTATION
+# ==========================================
+# Documentation builds
+docs/_build/
+site/
+.mkdocs/
+
+# API documentation
+api_docs/temp/
+
+# ==========================================
+# PROJECT SPECIFIC FILES
+# ==========================================
+# Model download scripts output
+download_progress.txt
+model_info.json
+
+# FastAPI specific
+.fastapi/
+staticfiles/
+
+# ASGI server logs
+gunicorn.log
+hypercorn.log
+
+# Image processing temp
+image_processing/temp/
+thumbnails/temp/
+
+# Configuration overrides
+local_config.py
+override_settings.py
+
+# Version control temp
+*.orig
+*.rej
+
+# ==========================================
+# SECURITY & COMPLIANCE
+# ==========================================
+# Security scans
+security_reports/
+vulnerability_scans/
+
+# Compliance reports
+compliance/
+audit_logs/
+
+# ==========================================
+# PERFORMANCE OPTIMIZATION
+# ==========================================
+# CUDA kernel cache
+__nv_cache__/
+.nv/
+
+# PyTorch Lightning logs
+lightning_logs/
+
+# Distributed training
+dist_logs/
+checkpoints/temp/
+
+# ==========================================
+# END OF FILE
+# ==========================================

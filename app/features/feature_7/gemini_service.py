@@ -2,6 +2,11 @@ from google import genai
 import os
 import uuid
 import logging
+import sys
+
+# Add the app directory to Python path for imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from core.config import config
 
 logger = logging.getLogger(__name__)
 
@@ -9,12 +14,12 @@ logger = logging.getLogger(__name__)
 class GeminiImageService:
     def __init__(self):
         """Initialize the Gemini image generation service"""
-        self.api_key = os.environ.get("GEMINI_API_KEY")
+        self.api_key = config.GEMINI_API_KEY
         if not self.api_key:
-            raise ValueError("GEMINI_API_KEY environment variable is required")
+            raise ValueError("GEMINI_API_KEY is required in .env file")
         
         self.client = genai.Client(api_key=self.api_key)
-        self.output_dir = "generated_images"
+        self.output_dir = config.IMAGES_DIR
         
         # Create output directory if it doesn't exist
         os.makedirs(self.output_dir, exist_ok=True)
@@ -57,8 +62,8 @@ class GeminiImageService:
             generated_image = result.generated_images[0]
             generated_image.image.save(filepath)
             
-            # Return filename and URL
-            image_url = f"/static/generated_images/{filename}"
+            # Return filename and URL using config
+            image_url = f"{config.BASE_URL}/images/{filename}"
             
             logger.info(f"Image generated successfully: {filename}")
             return filename, image_url
