@@ -9,8 +9,10 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import feature routes directly
+from features.feature_5.prompt_enhancer_route import router as prompt_enhancer_router
 from features.feature_6.stable_diffusion_route import router as stable_diffusion_router
 from features.feature_7.gemini_route import router as gemini_router
+from features.feature_8.gemini_nanobanana_route import router as gemini_nanobanana_router
 
 # Configure logging
 logging.basicConfig(
@@ -22,7 +24,7 @@ logger = logging.getLogger(__name__)
 # Create FastAPI app
 app = FastAPI(
     title="XobehStudio AI Services",
-    description="AI service platform with Stable Diffusion image generation",
+    description="AI service platform with Stable Diffusion image generation, Gemini AI, and intelligent prompt enhancement",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -43,8 +45,10 @@ os.makedirs(images_dir, exist_ok=True)
 app.mount("/images", StaticFiles(directory=images_dir), name="images")
 
 # Include routers
+app.include_router(prompt_enhancer_router, prefix="/api/v1")
 app.include_router(stable_diffusion_router, prefix="/api/v1")
 app.include_router(gemini_router, prefix="/api/v1")
+app.include_router(gemini_nanobanana_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 # Create API router
 router = APIRouter(
-    prefix="/nano-banana",
+    prefix="/iamgen",
     tags=["Gemini Image Generation"]
 )
 
