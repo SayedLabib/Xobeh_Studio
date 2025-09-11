@@ -348,24 +348,3 @@ pip install pytest black flake8 isort
 
 # Run tests
 pytest
-
-# Format code
-black .
-isort .
-```
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-For support and questions:
-- 📖 Check the troubleshooting section above
-- 🐛 Open an issue for bugs
-- 💡 Open a discussion for feature requests
-- 📧 Contact the development team
-
----
-
-**Happy Creating! 🎨✨**
