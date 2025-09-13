@@ -21,7 +21,7 @@ class ShapeEnum(str, Enum):
 class GeminiNanoBananaRequest(BaseModel):
     """Request schema for Gemini NanoBanana image generation using streaming API"""
     prompt: str = Field(
-        description="Text prompt describing the banana costume image to generate",
+        description="Text prompt describing the image to generate",
         min_length=1,
         max_length=1000,
         example="Generate an image of a banana wearing a superhero costume."
@@ -30,10 +30,8 @@ class GeminiNanoBananaRequest(BaseModel):
 
 class GeminiNanoBananaResponse(BaseModel):
     """Response schema for Gemini NanoBanana image generation"""
-    success: bool = Field(description="Whether the generation was successful")
     success_message: str = Field(description="Success message with style and shape info")
     image_url: str = Field(description="URL to the generated banana costume image")
-    filename: str = Field(description="Generated filename")
     shape: str = Field(description="The shape used for generation")
 
 

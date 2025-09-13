@@ -4,6 +4,8 @@ import os
 import uuid
 import logging
 import sys
+from typing import Optional
+from fastapi import UploadFile
 from google import genai
 from google.genai import types
 
@@ -45,7 +47,7 @@ class GeminiNanoBananaService:
         logger.info(f"File saved to: {filepath}")
         return filepath
 
-    def generate_banana_costume_image(self, prompt: str = "Generate an image of a banana wearing a costume.", style: str = "Photo", shape: str = "square") -> tuple[str, str]:
+    async def generate_banana_costume_image(self, prompt: str = "Generate an image of a banana wearing a costume.", style: str = "Photo", shape: str = "square", image_file: Optional[UploadFile] = None) -> tuple[str, str]:
         """
         Generate a banana costume image using Gemini's streaming image generation with style and shape
         
@@ -53,6 +55,7 @@ class GeminiNanoBananaService:
             prompt: Text description of the banana costume image to generate
             style: The style for the image (Photo, Illustration, Comic, etc.)
             shape: The shape/aspect ratio of the image (square, portrait, landscape)
+            image_file: Optional image file to use as reference (currently not implemented to avoid errors)
             
         Returns:
             tuple: (filename, image_url)
@@ -63,7 +66,12 @@ class GeminiNanoBananaService:
             # Create styled prompt by incorporating the style
             styled_prompt = f"{prompt}, in {style.lower()} style"
             
-            # Prepare content for the streaming API
+            # For now, only use text prompt to avoid inline_data errors
+            # TODO: Add image support once the inline_data issue is resolved
+            if image_file:
+                logger.warning("Image file provided but image support is temporarily disabled to avoid errors")
+            
+            # Prepare content for the streaming API (text only for now)
             contents = [
                 types.Content(
                     role="user",
