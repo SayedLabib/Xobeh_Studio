@@ -45,12 +45,14 @@ class GeminiNanoBananaService:
         logger.info(f"File saved to: {filepath}")
         return filepath
 
-    def generate_banana_costume_image(self, prompt: str = "Generate an image of a banana wearing a costume.") -> tuple[str, str]:
+    def generate_banana_costume_image(self, prompt: str = "Generate an image of a banana wearing a costume.", style: str = "Photo", shape: str = "square") -> tuple[str, str]:
         """
-        Generate a banana costume image using Gemini's streaming image generation
+        Generate a banana costume image using Gemini's streaming image generation with style and shape
         
         Args:
             prompt: Text description of the banana costume image to generate
+            style: The style for the image (Photo, Illustration, Comic, etc.)
+            shape: The shape/aspect ratio of the image (square, portrait, landscape)
             
         Returns:
             tuple: (filename, image_url)
@@ -58,12 +60,15 @@ class GeminiNanoBananaService:
         try:
             logger.info(f"Generating banana costume image with Gemini streaming for prompt: {prompt[:50]}...")
             
+            # Create styled prompt by incorporating the style
+            styled_prompt = f"{prompt}, in {style.lower()} style"
+            
             # Prepare content for the streaming API
             contents = [
                 types.Content(
                     role="user",
                     parts=[
-                        types.Part.from_text(text=prompt),
+                        types.Part.from_text(text=styled_prompt),
                     ],
                 ),
             ]
@@ -96,8 +101,8 @@ class GeminiNanoBananaService:
                 if (chunk.candidates[0].content.parts[0].inline_data and 
                     chunk.candidates[0].content.parts[0].inline_data.data):
                     
-                    # Generate unique filename with nanobanana prefix
-                    base_filename = f"nanobanana_{uuid.uuid4().hex}_{file_index}"
+                    # Generate unique filename with style and shape info
+                    base_filename = f"nanobanana_{style}_{shape}_{uuid.uuid4().hex}_{file_index}"
                     file_index += 1
                     
                     inline_data = chunk.candidates[0].content.parts[0].inline_data
@@ -124,7 +129,7 @@ class GeminiNanoBananaService:
             # Return filename and URL using config (same as feature_7)
             image_url = f"{config.BASE_URL}/images/{generated_filename}"
             
-            logger.info(f"Banana costume image generated successfully: {generated_filename}")
+            logger.info(f"Banana costume image generated successfully with {style} style in {shape} format: {generated_filename}")
             return generated_filename, image_url
             
         except Exception as e:

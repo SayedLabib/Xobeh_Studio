@@ -24,12 +24,14 @@ class GeminiImageService:
         # Create output directory if it doesn't exist
         os.makedirs(self.output_dir, exist_ok=True)
 
-    def generate_image(self, prompt: str) -> tuple[str, str]:
+    def generate_image(self, prompt: str, style: str, shape: str) -> tuple[str, str]:
         """
-        Generate an image using Gemini's imagen model
+        Generate an image using Gemini's imagen model with style and shape
         
         Args:
             prompt: Text description of the image to generate
+            style: The style for the image (Photo, Illustration, Comic, etc.)
+            shape: The shape/aspect ratio of the image (square, portrait, landscape)
             
         Returns:
             tuple: (filename, image_url)
@@ -37,13 +39,24 @@ class GeminiImageService:
         try:
             logger.info(f"Generating image with Gemini for prompt: {prompt[:50]}...")
             
+            # Create styled prompt by incorporating the style
+            styled_prompt = f"{prompt}, in {style.lower()} style"
+            
+            # Map shape to Gemini aspect ratio format
+            aspect_ratio_mapping = {
+                "square": "1:1",
+                "portrait": "9:16",
+                "landscape": "16:9"
+            }
+            aspect_ratio = aspect_ratio_mapping.get(shape, "1:1")
+            
             result = self.client.models.generate_images(
                 model="models/imagen-4.0-generate-001",
-                prompt=prompt,
+                prompt=styled_prompt,
                 config=dict(
                     number_of_images=1,
                     output_mime_type="image/jpeg",
-                    aspect_ratio="1:1",
+                    aspect_ratio=aspect_ratio,
                     image_size="1K",
                 ),
             )
@@ -54,8 +67,8 @@ class GeminiImageService:
             if len(result.generated_images) != 1:
                 logger.warning("Number of images generated does not match the requested number")
 
-            # Generate unique filename
-            filename = f"gemini_{uuid.uuid4().hex}.jpg"
+            # Generate unique filename with style and shape info
+            filename = f"gemini_{style}_{shape}_{uuid.uuid4().hex}.jpg"
             filepath = os.path.join(self.output_dir, filename)
             
             # Save the generated image
@@ -65,7 +78,7 @@ class GeminiImageService:
             # Return filename and URL using config
             image_url = f"{config.BASE_URL}/images/{filename}"
             
-            logger.info(f"Image generated successfully: {filename}")
+            logger.info(f"Image generated successfully with {style} style in {shape} format: {filename}")
             return filename, image_url
             
         except Exception as e:

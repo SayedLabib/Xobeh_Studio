@@ -13,6 +13,7 @@ class Config:
     GEMINI_API_SECRET = os.getenv("GEMINI_API_SECRET")
     OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
     HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+    FAL_API_KEY = os.getenv("FAL_API_KEY")
     
     # Stable Diffusion Settings
     STABLE_DIFFUSION_MODEL_ID = os.getenv("STABLE_DIFFUSION_MODEL_ID", "runwayml/stable-diffusion-v1-5")
