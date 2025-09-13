@@ -49,6 +49,7 @@ hub/
 # ==========================================
 # AI Generated images
 generated_images/
+generated_videos/
 outputs/
 results/
 *.png

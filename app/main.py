@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import feature routes directly
 from features.feature_2.dalle_route import router as dalle_router
+from features.feature_4.videogen_route import router as videogen_router
 from features.feature_5.prompt_enhancer_route import router as prompt_enhancer_router
 # from features.feature_6.stable_diffusion_route import router as stable_diffusion_router
 from features.feature_7.gemini_route import router as gemini_router
@@ -48,6 +49,7 @@ app.mount("/images", StaticFiles(directory=images_dir), name="images")
 # Include routers
 app.include_router(prompt_enhancer_router, prefix="/api/v1")
 app.include_router(dalle_router, prefix="/api/v1")
+app.include_router(videogen_router, prefix="/api/v1")
 app.include_router(gemini_router, prefix="/api/v1")
 app.include_router(gemini_nanobanana_router, prefix="/api/v1")
 
