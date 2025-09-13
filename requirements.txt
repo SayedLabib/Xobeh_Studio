@@ -1,13 +1,6 @@
 fastapi
 uvicorn
 pydantic
-diffusers
-transformers
-accelerate
-torch
-torchvision
-Pillow
-numpy
 requests
 python-multipart
 python-dotenv
