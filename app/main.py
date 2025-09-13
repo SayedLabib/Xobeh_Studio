@@ -17,6 +17,7 @@ from features.feature_7.gemini_route import router as gemini_router
 from features.feature_8.gemini_nanobanana_route import router as gemini_nanobanana_router
 from features.feature_9.flux_kontext_dev_route import router as flux_kontext_dev_router
 from features.feature_10.videogen3_route import router as videogen3_router
+from features.feature_11.flux_kontext_dev_edit_route import router as flux_kontext_edit_router
 
 # Configure logging
 logging.basicConfig(
@@ -56,6 +57,7 @@ app.include_router(videogen3_router, prefix="/api/v1")
 app.include_router(gemini_router, prefix="/api/v1")
 app.include_router(gemini_nanobanana_router, prefix="/api/v1")
 app.include_router(flux_kontext_dev_router, prefix="/api/v1")
+app.include_router(flux_kontext_edit_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
