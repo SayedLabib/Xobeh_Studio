@@ -15,6 +15,7 @@ from features.feature_5.prompt_enhancer_route import router as prompt_enhancer_r
 # from features.feature_6.stable_diffusion_route import router as stable_diffusion_router
 from features.feature_7.gemini_route import router as gemini_router
 from features.feature_8.gemini_nanobanana_route import router as gemini_nanobanana_router
+from features.feature_9.flux_kontext_dev_route import router as flux_kontext_dev_router
 from features.feature_10.videogen3_route import router as videogen3_router
 
 # Configure logging
@@ -54,6 +55,7 @@ app.include_router(videogen_router, prefix="/api/v1")
 app.include_router(videogen3_router, prefix="/api/v1")
 app.include_router(gemini_router, prefix="/api/v1")
 app.include_router(gemini_nanobanana_router, prefix="/api/v1")
+app.include_router(flux_kontext_dev_router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
