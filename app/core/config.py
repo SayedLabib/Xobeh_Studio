@@ -34,7 +34,7 @@ class Config:
     
     # Output Settings
     IMAGES_DIR = os.getenv("IMAGES_DIR", "generated_images")
-    BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+    BASE_URL = os.getenv("BASE_URL", "http://localhost:8069")
 
 
 # Global config instance

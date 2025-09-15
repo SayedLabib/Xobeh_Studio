@@ -22,12 +22,12 @@ COPY . .
 RUN mkdir -p /app/generated_images /app/generated_videos
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8069
 
 # Set environment variables
 ENV PYTHONPATH=/app
 ENV HOST=0.0.0.0
-ENV PORT=8000
+ENV PORT=8069
 
 # Run the application
 CMD ["python", "app/main.py"]
