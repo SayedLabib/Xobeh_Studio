@@ -114,8 +114,12 @@ class FluxKontextDevService:
             with open(file_path, 'wb') as f:
                 f.write(response.content)
             
+            # Return URL instead of file path
+            image_url = f"{config.BASE_URL}/images/{filename}"
+            
             logger.info(f"Image saved to: {file_path}")
-            return file_path
+            logger.info(f"Image URL: {image_url}")
+            return image_url
             
         except Exception as e:
             logger.error(f"Error downloading and saving image: {str(e)}")

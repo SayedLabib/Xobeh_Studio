@@ -101,8 +101,12 @@ class VideoGenService:
             # Save the video with custom filename
             generated_video.video.save(file_path)
             
+            # Return URL instead of file path
+            video_url = f"{config.BASE_URL}/videos/{filename}"
+            
             logger.info(f"Video saved to: {file_path}")
-            return file_path
+            logger.info(f"Video URL: {video_url}")
+            return video_url
             
         except Exception as e:
             logger.error(f"Error downloading and saving video: {str(e)}")

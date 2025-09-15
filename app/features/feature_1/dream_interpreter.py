@@ -93,7 +93,7 @@ class DreamInterpreterService:
             
             result.generated_images[0].image.save(file_path)
             
-            # Return full URL instead of just file path
+            # Return full URL with proper BASE_URL
             image_url = f"{config.BASE_URL}/images/{filename}"
             
             logger.info(f"Image saved: {file_path}")

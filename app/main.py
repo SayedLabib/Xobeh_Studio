@@ -50,6 +50,11 @@ images_dir = os.path.join(os.path.dirname(__file__), "..", "generated_images")
 os.makedirs(images_dir, exist_ok=True)
 app.mount("/images", StaticFiles(directory=images_dir), name="images")
 
+# Mount static files directory for serving generated videos
+videos_dir = os.path.join(os.path.dirname(__file__), "..", "generated_videos")
+os.makedirs(videos_dir, exist_ok=True)
+app.mount("/videos", StaticFiles(directory=videos_dir), name="videos")
+
 # Include routers
 app.include_router(dream_interpreter_router, prefix="/api/v1")
 app.include_router(prompt_enhancer_router, prefix="/api/v1")
