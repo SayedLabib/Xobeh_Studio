@@ -9,6 +9,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import feature routes directly
+from features.feature_1.dream_interpreter_route import router as dream_interpreter_router
 from features.feature_2.dalle_route import router as dalle_router
 from features.feature_4.videogen_route import router as videogen_router
 from features.feature_5.prompt_enhancer_route import router as prompt_enhancer_router
@@ -50,6 +51,7 @@ os.makedirs(images_dir, exist_ok=True)
 app.mount("/images", StaticFiles(directory=images_dir), name="images")
 
 # Include routers
+app.include_router(dream_interpreter_router, prefix="/api/v1")
 app.include_router(prompt_enhancer_router, prefix="/api/v1")
 app.include_router(dalle_router, prefix="/api/v1")
 app.include_router(videogen_router, prefix="/api/v1")
