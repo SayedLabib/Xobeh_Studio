@@ -49,10 +49,8 @@ async def generate_image(
         success_message = f"Successfully generated {style} style image in {shape} format using Gemini"
         
         return GeminiImageResponse(
-            success=True,
-            message="Image generated successfully with Gemini",
+            success=success_message,
             image_url=image_url,
-            success_message=success_message,
             shape=shape
         )
         

@@ -17,26 +17,18 @@ class ShapeEnum(str, Enum):
     PORTRAIT = "portrait"
     LANDSCAPE = "landscape"
 
-
-class GeminiImageRequest(BaseModel):
-    """Request schema for Gemini image generation"""
+class QwenRequest(BaseModel):
+    """Request schema for Qwen image generation"""
     prompt: str = Field(
-        ..., 
+        ...,
         description="Text prompt describing the image to generate",
         min_length=1,
         max_length=1000,
-        example="A beautiful chocolate lady dancing in the kitchen"
+        example="A beautiful landscape with mountains and a lake"
     )
 
-
-class GeminiImageResponse(BaseModel):
-    """Response schema for Gemini image generation"""
-    success: str = Field(description="Whether the generation was successful")
+class QwenResponse(BaseModel):
+    """Response schema for Qwen image generation"""
+    success_message: str = Field(description="Success message")
     image_url: str = Field(description="URL to the generated image")
-    shape: str = Field(description="The shape used for generation")
-
-
-class ErrorResponse(BaseModel):
-    """Error response schema"""
-    success: bool = False
-    message: str = Field(description="Error message")
+    style: str = Field(description="The style used for generation")
