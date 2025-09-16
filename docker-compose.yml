@@ -50,12 +50,3 @@ services:
 networks:
   xobeh-network:
     driver: bridge
-
-# Optional: For development without nginx
-# Run with: docker-compose --profile dev up
-profiles:
-  dev:
-    services:
-      xobeh-studio:
-        ports:
-          - "8069:8069"
