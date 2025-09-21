@@ -336,10 +336,6 @@ DEBUG=true
 LOG_LEVEL=DEBUG
 ```
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
 ### Development Setup
 ```bash
 # Install development dependencies
